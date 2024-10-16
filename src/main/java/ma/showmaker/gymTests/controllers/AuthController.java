@@ -4,16 +4,16 @@ import ma.showmaker.gymTests.models.User;
 import ma.showmaker.gymTests.repositories.UserRepository;
 import ma.showmaker.gymTests.utilities.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Objects;
-
 @RestController
-@RequestMapping(name = "/auth")
 public class AuthController {
 
     @Autowired
@@ -22,21 +22,24 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtService;
 
-    //Why not autowire it
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    public BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
-    public User registerUser(@RequestBody User user){
+    public ResponseEntity<User> registerUser(@RequestBody User user){
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody User user){
-        User doesUserExist = userRepository.findByUserName(user.getUserName());
-        if(Objects.nonNull(doesUserExist) && bCryptPasswordEncoder.matches(user.getPassword(), doesUserExist.getPassword())){
-            return jwtService.generateToken(user.getUserName());
-        }
-        throw new RuntimeException("invalid credentials");
+    public ResponseEntity<String> loginUser(@RequestBody User user){
+       Authentication authentication =
+               UsernamePasswordAuthenticationToken.unauthenticated(user.getUserName(), user.getPassword());
+       this.authenticationManager.authenticate(authentication);
+        String token = jwtService.generateToken(user.getUserName());
+        return ResponseEntity.ok(token);
     }
 }

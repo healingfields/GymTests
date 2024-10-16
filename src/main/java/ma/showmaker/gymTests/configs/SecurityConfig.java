@@ -1,6 +1,7 @@
 package ma.showmaker.gymTests.configs;
 
 import ma.showmaker.gymTests.filters.JwtFilter;
+import ma.showmaker.gymTests.providers.CustomAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,30 +20,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig{
+public class SecurityConfig {
+
+    @Autowired
+    public CustomAuthenticationProvider customAuthenticationProvider;
 
     @Autowired
     private JwtFilter jwtFilter;
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
     public static final String[] WHITE_LIST = {
-            "/auth/login",
-            "/auth/register"
+            "/login",
+            "/register"
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-            httpSecurity
+        httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(WHITE_LIST)
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
+                //        auth.requestMatchers(WHITE_LIST).permitAll()
+                //                .anyRequest().authenticated()
+                        auth.anyRequest().permitAll()
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -51,10 +49,10 @@ public class SecurityConfig{
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity){
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
-        return new ProviderManager(daoAuthenticationProvider);
+    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) {
+       //DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+       //daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
+        return new ProviderManager(customAuthenticationProvider);
 
     }
 }
