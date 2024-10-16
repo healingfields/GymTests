@@ -1,10 +1,14 @@
 package ma.showmaker.gymTests.utilities;
 
-import io.jsonwebtoken.InvalidClaimException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SecurityException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -27,15 +31,32 @@ public class JwtUtil {
                 .compact();
     }
 
-    public void validateToken(String token, String username){
+    public String extractNameFromToken(String token){
+        return Jwts
+                .parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    public boolean validateToken(String token){
         try{
-            Jwts.parser().verifyWith(secretKey)
-                    .requireSubject(username)
-                    .requireNotBefore(new Date())
+            Jwts.parser()
+                    .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(token);
-        }catch (InvalidClaimException ex){
-            logger.log(Level.ERROR, "invalid claim");
+            return true;
+        }catch (SecurityException | MalformedJwtException ex){
+            logger.log(Level.ERROR, "jwt incorrect");
+            throw new AuthenticationCredentialsNotFoundException("jwt incorrect");
+        }catch (ExpiredJwtException ex){
+            logger.log(Level.ERROR, "jwt expired");
+            throw new AuthenticationCredentialsNotFoundException("jwt expired");
+        }catch(UnsupportedJwtException ex){
+            logger.log(Level.ERROR, "unsupported format");
+            throw new AuthenticationCredentialsNotFoundException("unsupported format");
         }
     }
 
