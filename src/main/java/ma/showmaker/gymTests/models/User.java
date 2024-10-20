@@ -13,13 +13,13 @@ public class User {
     @Id
     //to look out
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     @Column(name = "user_name", nullable = false, unique = true)
-    public String userName;
+    private String userName;
 
     @Column(name = "password", nullable = false)
-    public String password;
+    private String password;
 
     public User(){}
 
