@@ -16,4 +16,13 @@ public class Answer {
 
     @Column(name = "content")
     private String content;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
+
 }

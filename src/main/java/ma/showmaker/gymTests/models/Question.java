@@ -16,4 +16,8 @@ public class Question {
 
     @Column(name = "content")
     private String content;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
