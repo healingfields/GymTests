@@ -38,8 +38,9 @@ public class AnswerController {
         String username = jwtService.extractNameFromToken(token);
         User user = userRepository.findByUserName(username);
         Optional<Question> question = questionRepository.findById(answerDto.getQuestionId());
+        Answer answer = new Answer(answerDto.getContent(), user, question.get());
 
-        Answer answer = answerRepository.save(new Answer(answerDto.getContent(), user, question.get()));
-        return ResponseEntity.ok(answer);
+        Answer savedAnswer = answerRepository.save(answer);
+        return ResponseEntity.ok(savedAnswer);
     }
  }

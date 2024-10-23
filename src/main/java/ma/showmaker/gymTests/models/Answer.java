@@ -1,14 +1,17 @@
 package ma.showmaker.gymTests.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Table(name = "answers")
+@Table(name = "answers",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "question_id"})    )
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Answer {
 
     @Id
@@ -18,12 +21,14 @@ public class Answer {
     @Column(name = "content")
     private String content;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = false)
+    @JsonIgnore
     private User user;
 
     @OneToOne
-    @JoinColumn(name = "question_id")
+    @JoinColumn(name = "question_id", nullable = false, unique = false)
+    @JsonIgnore
     private Question question;
 
     public Answer(String content, User user, Question question){
