@@ -2,6 +2,7 @@ package ma.showmaker.gymTests.controllers;
 
 import ma.showmaker.gymTests.models.User;
 import ma.showmaker.gymTests.repositories.UserRepository;
+import ma.showmaker.gymTests.responses.AuthResponse;
 import ma.showmaker.gymTests.utilities.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +36,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody User user){
+    public ResponseEntity<?> loginUser(@RequestBody User user){
        Authentication authentication =
                UsernamePasswordAuthenticationToken.unauthenticated(user.getUserName(), user.getPassword());
        this.authenticationManager.authenticate(authentication);
         String token = jwtService.generateToken(user.getUserName());
-        return ResponseEntity.ok(token);
+
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 }
