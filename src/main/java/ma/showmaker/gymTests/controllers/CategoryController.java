@@ -1,7 +1,8 @@
 package ma.showmaker.gymTests.controllers;
 
+import ma.showmaker.gymTests.Mappers.QuestionMapper;
+import ma.showmaker.gymTests.Response.QuestionResponse;
 import ma.showmaker.gymTests.models.Category;
-import ma.showmaker.gymTests.models.Question;
 import ma.showmaker.gymTests.repositories.CategoryRepository;
 import ma.showmaker.gymTests.repositories.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 public class CategoryController {
@@ -35,9 +37,15 @@ public class CategoryController {
 
     @GetMapping("/categories/{categoryId}/questions")
     @ResponseBody
-    public ResponseEntity<Set<Question>> getQuestionsByCategory(@PathVariable Long categoryId){
+    public ResponseEntity<Set<QuestionResponse>> getQuestionsByCategory(@PathVariable Long categoryId){
         Optional<Category> optionalCategory = this.categoryRepository.findById(categoryId);
-        return optionalCategory.map(category -> ResponseEntity.ok(category.getQuestions()))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptySet()));
+        if(optionalCategory.isPresent()){
+            Category category = optionalCategory.get();
+            Set<QuestionResponse> questionResponses = category.getQuestions()
+                    .stream().map(QuestionMapper::toQuestionResponse)
+                    .collect(Collectors.toSet());
+            return ResponseEntity.ok(questionResponses);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptySet());
     }
 }

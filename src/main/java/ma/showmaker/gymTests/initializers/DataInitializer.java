@@ -25,7 +25,10 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         User user = userRepository.save(new User("Idriss", "$2a$12$ZEn5obhnpisp8sJbW6ixO.P9TftrpXnm.H1Vd0JPDI067Qr9w5oVe"));
-        Category category = categoryRepository.save(new Category("personalInfos"));
+        Category category = categoryRepository.save(new Category("personal Infos"));
+        categoryRepository.save(new Category("health Infos"));
+        categoryRepository.save(new Category("training Infos"));
+        categoryRepository.save(new Category("activity infos"));
         questionRepository.save(new Question("whats ur age?", category));
         questionRepository.save(new Question("whats ur sexe?", category));
         questionRepository.save(new Question("whats ur name?", category));
