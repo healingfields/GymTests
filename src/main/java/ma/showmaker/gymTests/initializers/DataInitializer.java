@@ -32,7 +32,7 @@ public class DataInitializer implements CommandLineRunner {
         questionRepository.save(new Question("whats ur age?", category));
         questionRepository.save(new Question("whats ur sexe?", category));
         questionRepository.save(new Question("whats ur name?", category));
-        questionRepository.save(new Question("whats ur last name?", category));
+        questionRepository.save(new Question("whats ur last name?", category)); 
 
     }
 }

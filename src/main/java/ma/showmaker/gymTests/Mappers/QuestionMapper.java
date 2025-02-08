@@ -7,8 +7,8 @@ public abstract class QuestionMapper {
 
     public static QuestionResponse toQuestionResponse(Question question){
         QuestionResponse questionResponse = new QuestionResponse();
-        questionResponse.setId(questionResponse.getId());
-        questionResponse.setContent(questionResponse.getContent());
+        questionResponse.setId(question.getId());
+        questionResponse.setContent(question.getContent());
         questionResponse.setCategoryId(question.getCategory().getId());
         return questionResponse;
     }
