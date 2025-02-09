@@ -4,7 +4,6 @@ import ma.showmaker.gymTests.Mappers.QuestionMapper;
 import ma.showmaker.gymTests.Response.QuestionResponse;
 import ma.showmaker.gymTests.models.Category;
 import ma.showmaker.gymTests.repositories.CategoryRepository;
-import ma.showmaker.gymTests.repositories.QuestionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,6 @@ public class CategoryController {
 
     @Autowired
     public CategoryRepository categoryRepository;
-
-    @Autowired
-    public QuestionRepository questionRepository;
 
     @GetMapping("/categories")
     @ResponseBody

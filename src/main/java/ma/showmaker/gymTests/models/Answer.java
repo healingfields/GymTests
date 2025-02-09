@@ -22,12 +22,12 @@ public class Answer {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
 
     @OneToOne
-    @JoinColumn(name = "question_id", nullable = false, unique = false)
+    @JoinColumn(name = "question_id", nullable = false)
     @JsonIgnore
     private Question question;
 
@@ -36,5 +36,4 @@ public class Answer {
         this.user = user;
         this.question = question;
     }
-
 }
